@@ -1,0 +1,62 @@
+.hidden {
+ visibility: hidden;
+ width: 0px;
+ height: 0px;
+ margin: 0px;
+ padding: 0px;
+ border-style: none;
+ border-width: 0px;
+ max-width: 0px;
+ max-height: 0px;
+}
+select, input {border:1px dotted #0071b5; border-radius: 3px; font-weight: bolder; height: 21px; background-color:#FFE; cursor: pointer; text-align: center;}
+.submit {background-color: #EBCAF1; height:25px;}
+.submit:hover { background-color: #B072A8;}
+.btn-large {padding: 8px 15px; font-size: 17.5px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; cursor: pointer;}
+.btn-large:hover { background-color: #BACCDF;}
+#midi {
+ font-family:Courier New, monospace;
+ background-color:#eef;
+ border:none;
+ padding:0.2em;
+}
+.Center {
+ width: 86%; height: 28%; margin: auto; margin-top: 25px; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+}
+div#piano {
+ position: relative; color: #808080; height: 82px;
+}
+div.ivory {
+ position: absolute; left: 0px; top: 0px; border-left: 1px solid; width: 1672px;
+}
+.ivory span {
+ background-color: #fffff0; padding: 0px; margin: 0px; border: 1px solid; border-left: 0px; display: inline-block; width: 21px; height: 80px; vertical-align: top;
+}
+div.ebony {
+ position: absolute; left: 0px; top: 0px; margin-left: 14px; width: 1672px;
+}
+.ebony span {
+ position: relative; z-index: 1; background-color: #111; padding: 0px; margin: 0px; border: 1px solid; display: inline-block; width: 12px; height: 56px; margin-right: 12px; vertical-align: top;
+}
+.ebony span.break {
+ border: 0px; display: inline-block; width: 1px; margin-right: 11px; visibility:hidden;
+}
+.ivory span.on, .ebony span.on {
+ background-color: #B072A8;
+}
+.controls {
+ margin-top: 45px;
+}
+input[type=range].vVertical {
+ -webkit-appearance: none; background-color: #EFEFEF; width: 90px; height:10px; margin-top: 40px; -webkit-transform:rotate(270deg); -moz-transform:rotate(270deg);
+ -o-transform:rotate(270deg); -ms-transform:rotate(270deg); transform:rotate(270deg); z-index: 0;
+}
+input[type="range"]::-webkit-slider-thumb {
+ -webkit-appearance: none; border: 1px solid #611790; background-color: #EBCAF1; width: 20px; height: 20px;
+}
+input[type=range]:focus {
+  background: pink;
+}
+input[type=range]:focus::-webkit-slider-thumb {
+ -webkit-appearance: none; border: 1px solid #611790; background-color: #E0F9F3; width: 23px; height: 23px;
+}

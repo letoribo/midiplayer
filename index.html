@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Play MIDI File</title>
+<script src="js/JZZ.Midi.js"></script>
+<script src="js/JZZ.MidiFile.js"></script>
+<script src="js/watch.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="player.css">
+<link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+<object id="Jazz1" classid="CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90" class="hidden">
+  <object id="Jazz2" type="audio/x-jazz" class="hidden">
+<p style="visibility:visible;">This page requires <a href=http://jazz-soft.net>Jazz-Plugin</a> ...</p>
+  </object>
+</object>
+<div id=piano class="Center">
+<div class=ebony>
+<span id=1></span><span id=3></span><span class=break></span><span id=6></span><span id=8></span><span id=10></span><span class=break></span><span id=13></span><span id=15></span><span class=break></span><span id=18></span><span id=20></span><span id=22></span><span class=break></span><span id=25></span><span id=27></span><span class=break></span><span id=30></span><span id=32></span><span id=34></span><span class=break></span><span id=37></span><span id=39></span><span class=break></span><span id=42></span><span id=44></span><span id=46></span><span class=break></span><span id=49></span><span id=51></span><span class=break></span><span id=54></span><span id=56></span><span id=58></span><span class=break></span><span id=61></span><span id=63></span><span class=break></span><span id=66></span><span
+id=68></span><span id=70></span><span class=break></span><span id=73></span><span id=75></span><span class=break></span><span id=78></span><span id=80></span><span id=82></span><span class=break></span><span id=85></span><span id=87></span><span class=break></span><span id=90></span><span id=92></span><span id=94></span><span class=break></span><span id=97></span><span id=99></span><span class=break></span><span id=102></span><span id=104></span><span id=106></span><span class=break></span><span id=109></span><span id=111></span><span class=break></span><span id=114></span><span id=116></span><span id=118></span><span class=break></span><span id=121></span><span id=123></span><span class=break></span><span id=126></span>
+</div>
+<div class=ivory>
+<span id=0></span><span id=2></span><span id=4></span><span id=5></span><span id=7></span><span id=9></span><span id=11></span><span id=12></span><span id=14></span><span id=16></span><span id=17></span><span id=19></span><span id=21></span><span id=23></span><span id=24></span><span id=26></span><span id=28></span><span id=29></span><span id=31></span><span id=33></span><span id=35></span><span id=36></span><span id=38></span><span id=40></span><span id=41></span><span id=43></span><span id=45></span><span id=47></span><span id=48></span><span id=50></span><span id=52></span><span id=53></span><span id=55></span><span id=57></span><span id=59></span><span id=60></span><span id=62></span><span id=64></span><span id=65></span><span id=67></span><span id=69></span><span id=71></span><span id=72></span><span
+id=74></span><span id=76></span><span id=77></span><span id=79></span><span id=81></span><span id=83></span><span id=84></span><span id=86></span><span id=88></span><span id=89></span><span id=91></span><span id=93></span><span id=95></span><span id=96></span><span id=98></span><span id=100></span><span id=101></span><span id=103></span><span id=105></span><span id=107></span><span id=108></span><span id=110></span><span id=112></span><span id=113></span><span id=115></span><span id=117></span><span id=119></span><span id=120></span><span id=122></span><span id=124></span><span id=125></span><span id=127></span>
+</div>
+</div>
+<center>
+<p>MIDI Out: <select id=selectmidi onchange='changemidi();'></select>
+<label> Sound: </label><select id=midiSnd onchange='changeSnd();'></select></p>
+<p class = "controls">
+ <input type="range" id="volume" min="0" max="127" value="117" onmouseup="changeVolume();" class="vVertical"/>
+ <label>Volume: </label><b id="vv"></b>
+ <input type="range" id="pan" min="0" max="127" onmouseup="changePan();" class="vVertical"/>
+ <label>Pan: </label><b id="pv"></b>
+ <input type="range" id="modulation" min="0" max="127" value="10" onmouseup="changeModulation();" class="vVertical"/> 
+ <label>Modulation: </label><b id="mv"></b>
+</p><br>
+<p> 
+  <label>Sustain: </label>
+  <input type="checkbox" id="sustain" onclick='ctrl64();'> 
+</p><br>
+<p>
+<button class="btn-large" id=play onmousedown='play();' disabled>Play</button>
+<input type=checkbox id=loop onclick='onloop();'><label for=loop>Loop</label>
+<button class="btn-large" id=pause onmousedown='pause();' disabled>Pause</button>
+<button class="btn-large" id=stop onmousedown='stop();' disabled>Stop</button>
+</p>
+<h1>Play MIDI File</h1>
+<h2>from file:</h2>
+<p><input type=file id=file size=80 onchange='fromFile();'></p>
+<p>
+<div id=midi>Files accepted: SMF (*.mid, *.kar), RMID (*.rmi)</div>
+</p>
+<h2>from URL:</h2>
+<form onsubmit='fromUrl(); return false;'>
+<p><input type="text" id="url" size="80" value="http://www.piano-midi.de/midis/moszkowski/mos_op36_6.mid"><input type="submit" value="Submit..." class="submit"></p>
+</form>
+</center>
+
+<script>
+var Jazz = document.getElementById("Jazz1"); if(!Jazz || !Jazz.isJazz) Jazz = document.getElementById("Jazz2");
+var sounds = ['Acoustic Grand Piano','Bright Acoustic Piano','Electric Grand Piano','Honky-tonk Piano','Electric Piano 1','Electric Piano 2','Harpsichord','Clavinet',
+    'Celesta','Glockenspiel','Music Box','Vibraphone','Marimba','Xylophone','Tubular Bells','Dulcimer','Drawbar Organ','Percussive Organ','Rock Organ',
+    'Church Organ','Reed Organ','Accordion','Harmonica','Tango Accordion','Acoustic Guitar nylon','Acoustic Guitar steel','Electric Guitar jazz',
+    'Electric Guitar clean','Electric Guitar muted','Overdriven Guitar','Distortion Guitar','Guitar Harmonics','Acoustic Bass','Electric Bass finger','Electric Bass pick',
+    'Fretless Bass','Slap Bass 1','Slap Bass 2','Synth Bass 1','Synth Bass 2','Violin','Viola','Cello','Contrabass','Tremolo Strings','Pizzicato Strings','Orchestral Harp','Timpani',
+    'String Ensemble 1','String Ensemble 2','Synth Strings 1','Synth Strings 2','Choir Aahs','Voice Oohs','Synth Choir','Orchestra Hit','Trumpet','Trombone',
+    'Tuba','Muted Trumpet','French Horn','Brass Section','Synth Brass 1','Synth Brass 2','Soprano Sax','Alto Sax','Tenor Sax','Baritone Sax','Oboe','English Horn',
+    'Bassoon','Clarinet','Piccolo','Flute','Recorder','Pan Flute','Blown Bottle','Shakuhachi','Whistle','Ocarina','Lead 1 square','Lead 2 sawtooth','Lead 3 calliope',
+    'Lead 4 chiff','Lead 5 charang','Lead 6 voice','Lead 7 fifths','Lead 8 bass + lead','Pad 1 new age','Pad 2 warm','Pad 3 polysynth','Pad 4 choir','Pad 5 bowed',
+    'Pad 6 metallic','Pad 7 halo','Pad 8 sweep','FX 1 rain','FX 2 soundtrack','FX 3 crystal','FX 4 atmosphere','FX 5 brightness','FX 6 goblins','FX 7 echoes','FX 8 sci-fi',
+    'Sitar','Banjo','Shamisen','Koto','Kalimba','Bagpipe','Fiddle','Shanai','Tinkle Bell','Agogo','Steel Drums','Woodblock','Taiko Drum','Melodic Tom',
+    'Synth Drum','Reverse Cymbal','Guitar Fret Noise','Breath Noise','Seashore','Bird Tweet','Telephone Ring','Helicopter','Applause','Gunshot'];
+var key;
+document.onmousedown=function(e){
+  var e=window.event || e;
+  var k;
+  if (e.target) k = e.target;
+  else if (e.srcElement) k = e.srcElement;
+  var m=parseInt(k.id);
+  if(k.id==m)
+  { document.onmouseup(e);
+    if(Jazz.isJazz) Jazz.MidiOut(0x90,m,0x7f);
+    k.className="on"; key=k;
+  }
+  return true;
+}
+document.onmouseup=function(e){
+  if(key)
+  { var m=parseInt(key.id);
+    { if(Jazz.isJazz) Jazz.MidiOut(0x80,m,0);
+      key.className=""; key="";
+    }
+  }
+}
+
+var observe = function(t){
+  watch(t, function(prop, action, newvalue, oldvalue){
+    var on = document.getElementById(newvalue).className="on";
+    var off = document.getElementById(oldvalue).className="";
+  });
+}
+
+JZZ.MidiFile.Player.prototype.tick=function(){
+  var t=(new Date()).getTime();
+  var c=this.c0+(t-this.t0)*this.mul;
+  for(;this.ptr<this.length;this.ptr++){
+  var e=this[this.ptr];
+  
+  var id = parseInt(e.data.charCodeAt(0));
+  var cmd = Math.floor(e.status.charCodeAt(0) / 16);
+  var l = Object.keys(trx).length; 
+  
+  
+  if(ntrk == 1 && midifile.type == 1) {
+    var id = parseInt(e.data.charCodeAt(0));
+  	 trx.track1 = id;
+  	 watch(trx, function(prop, action, newvalue, oldvalue){
+      if(typeof newvalue == "number") document.getElementById(newvalue).className="on";
+      document.getElementById(oldvalue).className="";
+    });
+  }
+  
+  if(ntrk == 1 && midifile.type == 0) {
+    if(cmd == 9) document.getElementById(id).className="on";
+    if(cmd == 8) document.getElementById(id).className="";
+  }
+
+  
+  if(cmd == 9) {
+    if(e.track <= l) trx["track"+e.track] = id;
+  }
+  if(cmd == 8) trx["track"+e.track] = id;
+  observe(trx);
+
+  if(e.time>c) break;
+  var evt={};
+  if(e.status=='\xff\x51' && this.ppqn){
+   this.mul=this.ppqn*1000./((e.data.charCodeAt(0)<<16)+(e.data.charCodeAt(1)<<8)+e.data.charCodeAt(2));
+   this.t0=t; this.c0=c;
+  }
+  else if(e.status.charCodeAt(0)==0xf7){ evt.midi=JZZ.MIDI(e.data);}
+  else if(e.status.charCodeAt(0)!=0xff){ evt.midi=JZZ.MIDI(e.status+e.data);}
+  else { evt.status=e.status; evt.data=e.data;};
+  evt.track=e.track;
+  if(typeof e.user != 'undefined') evt.user=e.user;
+  this.onEvent(evt);
+ }
+ if(this.ptr>=this.length){
+  this.onEvent({control:'end'});
+  if(this.looped){
+   this.ptr=0; this.c0=0; this.t0=t;
+  }
+  else this.stop();
+ }
+ var f=(function(x){return function(){x.tick();};})(this);
+ if(this.playing){ window.setTimeout(f,0); return;}
+ if(this.event=='pause') this.paused=t;
+ this.onEvent({control:this.event});
+}
+
+var player;
+function onPlayerEvent(e){
+ if(e.midi instanceof JZZ.Midi){
+  Jazz.MidiOutRaw(e.midi.array());
+ }
+ if(e.control=='play'){
+  document.getElementById('play').disabled=true;
+  document.getElementById('pause').disabled=false;
+  document.getElementById('pause').innerHTML='Pause';
+  document.getElementById('stop').disabled=false;
+  document.getElementById('selectmidi').disabled=true;
+ }
+ else if(e.control=='stop'){
+  for(var i=0;i<16;i++) Jazz.MidiOut(0xb0+i,123,0);
+  for(var i=0;i<128;i++) document.getElementById(i).className="";
+  document.getElementById('play').disabled=false;
+  document.getElementById('pause').disabled=true;
+  document.getElementById('pause').innerHTML='Pause';
+  document.getElementById('stop').disabled=true;
+  document.getElementById('selectmidi').disabled=false;
+  for(var i=0;i<128;i++) document.getElementById(i).className="";
+ }
+ else if(e.control=='pause'){
+  for(var i=0;i<16;i++) Jazz.MidiOut(0xb0+i,123,0);
+  document.getElementById('pause').innerHTML='Resume';
+ }
+ else if(e.control=='resume'){
+  document.getElementById('pause').innerHTML='Pause';
+ }
+}
+function play(){ player.play();}
+function stop(){ player.stop();}
+function pause(){
+ if(player.playing) player.pause();
+ else player.resume();
+}
+function onloop(){
+ if(typeof player !== "undefined") player.loop(document.getElementById('loop').checked);
+}
+function changemidi(){
+  Jazz.MidiOutOpen(select.value);
+  select.blur();
+}
+function changeSnd(){
+  var num = sounds.indexOf(select_sound.value);
+  for(var i = 0; i < 16; i++) {
+  	 Jazz.MidiOut(0xc0+i, num, 0);
+  }
+  select_sound.blur();
+};
+function changeVolume(){
+  var volume = document.getElementById('volume').value;
+  for(var i = 0; i < 16; i++) {
+  	 Jazz.MidiOut(0xb0+i, 7, Number(volume));
+  }
+  document.getElementById('vv').innerHTML = volume;
+  document.getElementById('volume').blur();
+};
+function changePan(){
+  var pan = document.getElementById('pan').value;
+  for(var i = 0; i < 16; i++) {
+  	 Jazz.MidiOut(0xb0+i, 10, Number(pan));
+  }
+  document.getElementById('pv').innerHTML = pan;
+  document.getElementById('pan').blur();
+};
+function changeModulation(){
+  var modulation = document.getElementById('modulation').value;
+  for(var i = 0; i < 16; i++) {
+  	 Jazz.MidiOut(0xb0+i, 1, Number(modulation));
+  }
+  document.getElementById('mv').innerHTML = modulation;
+  document.getElementById('modulation').blur();
+};
+function ctrl64(){
+ document.getElementById('sustain').checked ? Jazz.MidiOut(0xb0, 64, 64) : Jazz.MidiOut(0xb0, 64, 0);
+}
+function fromUrl(){
+ var url=document.getElementById('url').value;
+ fName(url);
+ try{
+  var req=new XMLHttpRequest();
+  req.open("GET",'proxy.php?url='+url,true);  
+  
+  if(req.overrideMimeType){
+   req.overrideMimeType("text/plain; charset=x-user-defined");
+  }
+  req.onreadystatechange=function(ev){
+   if(req.readyState===4){
+    if(req.status===200){
+     var s='';
+     if(typeof req.responseBody=='unknown'){ // MSIE
+      var a=new VBArray(req.responseBody).toArray();
+      for(var i=0;i<a.length;i++) s+=String.fromCharCode(a[i]);
+     }
+     else {
+      var r=req.responseText;
+      for(var i=0;i<r.length;i++) s+=String.fromCharCode(r.charCodeAt(i)&0xff);
+     }
+     readMidiFile(s);
+    }
+    else err(req.status+": "+req.statusText);
+   }
+  };
+  req.send(null);
+ }
+ catch(e){ err(e);}
+}
+
+function fName(url){ document.getElementById('midi').innerHTML='<tt>'+url+'</tt>';}
+function err(e){ document.getElementById('midi').innerHTML='<span class=err>'+e+'</span>';}
+function fromFile(){
+ fName(document.getElementById('file').value);
+ if(window.FileReader){
+  var reader=new FileReader();
+  var f=document.getElementById('file').files[0];
+  reader.onload=function(e){ readMidiFile(e.target.result); console.log(e.target.result);};
+  reader.readAsBinaryString(f);
+ }
+ else err('File API is not supported in this browser!');
+}
+
+function readMidiFile(s){
+ try{
+  midifile = new JZZ.MidiFile(s);
+  console.log(midifile);
+  ntrk = midifile.ntrk; console.log(ntrk + " tracks");
+  trx = {};
+  if(ntrk == 1) trx['track1'] = 0
+  else
+  for(var i=1;i<ntrk;i++) trx['track'+i] = 0;
+  
+ player=midifile.player();
+ player.onEvent=onPlayerEvent;
+ document.getElementById('play').disabled=false;
+ document.getElementById('pause').disabled=true;
+ document.getElementById('stop').disabled=true;
+ document.getElementById('selectmidi').disabled=false;
+ }
+ catch(e){ err(e);}
+}
+var select_sound=document.getElementById('midiSnd');
+for(var i in sounds){
+  select_sound[i]=new Option(sounds[i],sounds[i],i==0,i==0);
+}
+ 
+var select=document.getElementById('selectmidi');
+try{
+ var list=Jazz.MidiOutList();
+ for(var i in list){
+  select[i]=new Option(list[i],list[i],i==0,i==0);
+ }
+ Jazz.MidiOutOpen(0);
+
+ player=midifile.player();
+ player.onEvent=onPlayerEvent;
+ document.getElementById('play').disabled=false;
+ document.getElementById('pause').disabled=true;
+ document.getElementById('stop').disabled=true;
+ document.getElementById('selectmidi').disabled=false;
+}
+catch(err){}
+
+</script>
+</body>
+</html>
