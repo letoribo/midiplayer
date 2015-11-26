@@ -121,8 +121,7 @@ JZZ.MidiFile.Player.prototype.tick=function(){
   var id = parseInt(e.data.charCodeAt(0));
   var cmd = Math.floor(e.status.charCodeAt(0) / 16);
   var l = Object.keys(trx).length; 
-  
-  
+
   if(ntrk == 1 && midifile.type == 1) {
     var id = parseInt(e.data.charCodeAt(0));
   	 trx.track1 = id;
@@ -266,6 +265,7 @@ function fromUrl(){
      }
      else {
       var r=req.responseText;
+      console.log(r);
       for(var i=0;i<r.length;i++) s+=String.fromCharCode(r.charCodeAt(i)&0xff);
      }
      readMidiFile(s);
@@ -296,8 +296,6 @@ function loadXML(){
   req.open("GET","send.php?url="+url,true);
   req.send();
 }
-
-
 
 function fName(url){ document.getElementById('midi').innerHTML='<tt>'+url+'</tt>';}
 function err(e){ document.getElementById('midi').innerHTML='<span class=err>'+e+'</span>';}
@@ -344,13 +342,6 @@ try{
   select[i]=new Option(list[i],list[i],i==0,i==0);
  }
  Jazz.MidiOutOpen(0);
-
- player=midifile.player();
- player.onEvent=onPlayerEvent;
- document.getElementById('play').disabled=false;
- document.getElementById('pause').disabled=true;
- document.getElementById('stop').disabled=true;
- document.getElementById('selectmidi').disabled=false;
 }
 catch(err){}
 
